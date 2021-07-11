@@ -15,29 +15,33 @@ class Container extends Component {
         };
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        if(prevProps !== this.props.query) {
-            if(this.props.query) {
-                this.performSearch(this.props.query);
-            } else {
-                this.performSearch(this.props.match.params.query);
-            }
+    componentDidUpdate() {
+        let query = (this.props.query) ? this.props.query : this.props.match.params.query;
+        if(this.state.query !== query) {
+            console.log("prev: "+this.state.query+"query:"+query);
+            this.performSearch(query);
         }
     }
 
     componentDidMount(){
-        this.performSearch(this.props.query);
+        if(this.props.query) {
+            this.performSearch(this.props.query);
+        } else {
+            this.performSearch(this.props.match.params.query);
+        }
     }
 
     performSearch = (query) => {
         axios.get(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${query}&media=photos&per_page=24&format=json&nojsoncallback=1`)
             .then(response => {
                 this.setState({loading:true});
+                setTimeout(() => {
                     this.setState({
                         query: query,
                         photos: response.data.photos.photo,
                         loading: false
                     })
+                }, 150);
                
             })
             .catch(error => {
@@ -46,7 +50,6 @@ class Container extends Component {
     }
 
     render() {
-        console.log(this.props.query)
         return(
             <div className="photo-container">  
                 <h2>{this.state.query}</h2>
