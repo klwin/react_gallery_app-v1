@@ -18,7 +18,6 @@ class Container extends Component {
     componentDidUpdate() {
         let query = (this.props.query) ? this.props.query : this.props.match.params.query;
         if(this.state.query !== query) {
-            console.log("prev: "+this.state.query+"query:"+query);
             this.performSearch(query);
         }
     }
